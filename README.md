@@ -5,7 +5,7 @@ First API server. Built on Deno with Drash to use with MongoDB
 
 What is bad?
  - Comments
- - Promise<any>
+ - "Promise<any>"
  - Connects to individual primary cluster of mongo Atlas (folks say mongov0.13.0 works with URI connection)
  - No additional security
 
