@@ -1,5 +1,5 @@
 # drashing_deno_mongo_api
-First project API server project built on Deno with Drash to use with MongoDB
+First API server. Built on Deno with Drash to use with MongoDB
 
 .change.env < .env
 
