@@ -7,6 +7,7 @@ What is bad?
  - New connection created on each request
  - Comments
  - Promise any
+ - Calling await individually and not 2 or more at once
  - Connects to individual primary cluster of mongo Atlas (folks say mongov0.13.0 works with URI connection)
  - No additional security
 
