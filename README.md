@@ -3,15 +3,7 @@ First API server. Built on Deno with Drash to use with MongoDB
 
 .change.env < .env
 
-path | GET | POST
---- | --- | ---
-/ | Get list of items names and their quantity | <cneter>Send "name" to buy the item, returns quantity of that item left to be purchased 
-/authentication | If token is active in header, returns username and ecash of the token owner, else return false | Send your cookie to delete it
-/:username/inventory | Inventory owner is able to see the list of purchased items | Send "name" to put item on sale
-/admin/item | get first 5 items, skip 1 | Send "name" and "price" to create item
-/admin/items | | send "name" and "quantity" to add n ammount to already existing item
-/login | | Send "email" and "password"
-/register | | Send "email", "username" and "password"
+
 
 
 What is bad?
@@ -31,3 +23,13 @@ What is good?
 Other
   - Commented code, which works with Bearer Authentification
   - If VSCode says request or response doesn't exist - restart VSCode. If that didn't help try ctrl+x everything in deps.ts, and save, restart VSCode, click on every resource, ctrl+v everything in deps.ts and save, restart VSCode. Don't spam click every resource. Window restart was not helping much.
+
+path | GET | POST
+--- | --- | ---
+/ | Get list of items names and their quantity | <cneter>Send "name" to buy the item, returns quantity of that item left to be purchased 
+/authentication | If token is active in header, returns username and ecash of the token owner, else return false | Send your cookie to delete it
+/:username/inventory | Inventory owner is able to see the list of purchased items | Send "name" to put item on sale
+/admin/item | get first 5 items, skip 1 | Send "name" and "price" to create item
+/admin/items | | send "name" and "quantity" to add n ammount to already existing item
+/login | | Send "email" and "password"
+/register | | Send "email", "username" and "password"
