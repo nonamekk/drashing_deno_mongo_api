@@ -33,3 +33,4 @@ path | GET | POST
 /admin/items | | send "name" and "quantity" to add n ammount to already existing item
 /login | | Send "email" and "password"
 /register | | Send "email", "username" and "password"
+/username | Return username from db |
