@@ -16,6 +16,7 @@ class UserResource extends BaseResource {
     */
     public async GET() {
         try {
+            // add items owned counter
             const username = this.request.getPathParam("username") as string;
             const userData = await UserModel.getByUsername(username);
             const profileData = {

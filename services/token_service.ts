@@ -4,12 +4,13 @@ import {config as dotEnv} from "../config.ts";
 
 // generate key
 // verify key
-
+/*
 interface IPayload {
     username: string;
     exp: number;
     [key: string]:unknown
 }
+*/
 
 export default class TokenService extends BaseResource {
     // finding by id in collection is faster

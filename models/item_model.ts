@@ -1,6 +1,7 @@
-import BaseModel from "./base_model.ts";
-import {Bson} from "../deps.ts";
+import {Bson} from "../deps.ts"
 import {config as dotEnv} from "../config.ts";
+import {mongoClient} from "../db.ts";
+
 
 interface IItem {
     _id: {$oid: string};
@@ -10,30 +11,13 @@ interface IItem {
     owner: string;
 }
 
-export class ItemModel extends BaseModel {
-    /*
-        to do:
 
-        create
+const items = mongoClient.database(dotEnv.mongoDatabase as string).collection<IItem>("items");
 
-        getAll 
-        [ getAllInShop, getAllInInventory ] by option [status, ownerid]
-
-        Update 
-        [ updateStatus, updateOwner, updatePrice ]
-
-        delete
-
-    */
-
-    public static async connection() {
-        const client = await BaseModel.connect();
-        return client.database(dotEnv.mongoDatabase as string).collection<IItem>("items");
-    }
+export class ItemModel {
 
     public static async getById(itemId: string) {
-        const collection = await this.connection();
-        const itemData = await collection.findOne(
+        const itemData = await items.findOne(
             { _id: new Bson.ObjectId(itemId) },
             { noCursorTimeout: false } as any,
         );
@@ -41,17 +25,15 @@ export class ItemModel extends BaseModel {
     }
 
     public static async getByName(itemName: string) {
-        const collection = await this.connection();
-        const itemData = await collection.findOne(
+        const itemData = await items.findOne(
             { name: itemName },
             { noCursorTimeout: false } as any,
         );
         return itemData;
     }
 
-    public static async getByNameOnSale(itemName: string) {
-        const collection = await this.connection();
-        const itemData = await collection.findOne(
+    public static async getByNameOnSale(itemName: string): Promise<any> {
+        const itemData = await items.findOne(
             { name: itemName, onSale: true },
             { noCursorTimeout: false } as any,
         );
@@ -59,13 +41,11 @@ export class ItemModel extends BaseModel {
     }
 
     public static async create(item: any) {
-        const collection = await this.connection();
-        return (await collection.insertOne(item)).toString();
+        return (await items.insertOne(item)).toString();
     }
 
     public static async getAllInShop (skip: number, limit: number) {
-        const collection = await this.connection();
-        return await collection.find(
+        return await items.find(
             { onSale: true}, 
             { noCursorTimeout: false } as any )
             .skip(skip)
@@ -74,14 +54,12 @@ export class ItemModel extends BaseModel {
     }
 
     public static async getAll (skip: number, limit: number) {
-        const collection = await this.connection();
-        return await collection.find({}, { noCursorTimeout: false } as any).skip(skip)
+        return await items.find({}, { noCursorTimeout: false } as any).skip(skip)
             .limit(limit).toArray();
     }
 
 
     public static async update (item: any) {
-        const collection = await this.connection();
         const inType = (typeof(item.id)).toString();
         var filter;
         if (inType == "string") {
@@ -102,12 +80,11 @@ export class ItemModel extends BaseModel {
             price : item.updatedPrice,
         } }; 
         
-        return await collection.updateOne(filter, update);
+        return await items.updateOne(filter, update);
     }
 
     public static async delete (itemId: string) {
-        const collection = await this.connection();
-        return await collection.deleteOne({_id: new Bson.ObjectId(itemId)});
+        return await items.deleteOne({_id: new Bson.ObjectId(itemId)});
     }
 }
 

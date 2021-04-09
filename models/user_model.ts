@@ -1,91 +1,70 @@
-import BaseModel from "./base_model.ts";
 import {Bson} from "../deps.ts";
 import {config as dotEnv} from "../config.ts";
+import {mongoClient} from "../db.ts";
 
 
 interface IUser {
-    _id: {$oid: string},
-    email: string,
-    username: string,
-    password: string,
-    role: string
+    _id: {$oid: string};
+    email: string;
+    username: string;
+    password: string;
+    ecash: number;
+    role: string;
 }
 
-// Stop using any, you are in typescript! need fix
-// Yes, I know I can use fields to pass [key:string]:string to have a where() not getBy..(), for now this is ok
+const users = mongoClient.database(dotEnv.mongoDatabase as string).collection<IUser>("users");
 
-export class UserModel extends BaseModel {
-    /*
-
-        to do:
-
-        connect collection
-
-        get by id
-
-        get by email
-
-        create
-
-        update 
-
-        delete (set items status to sell active)
-
-    */
-
-    private static async connection() {
-        const client = await BaseModel.connect();
-        return client.database(dotEnv.mongoDatabase as string).collection<IUser>("users");
-    }
+export class UserModel {
 
     public static async getById(userId: string) {
-        const collection = await this.connection();
-        return await collection.findOne(
+        return await users.findOne(
             { _id: new Bson.ObjectId(userId) },
             { noCursorTimeout: false } as any,
         );
     }
 
     public static async getByEmail(userEmail: string): Promise<any> {
-        const collection = await this.connection();
-        return await collection.findOne(
+        return await users.findOne(
             { email: userEmail },
             { noCursorTimeout: false } as any,
         );
     }
 
     public static async getByUsername(userUsername: string): Promise<any>  {
-        const collection = await this.connection();
-        return await collection.findOne(
+        return await users.findOne(
             { username: userUsername}, 
             { noCursorTimeout: false } as any
         );
     }
 
     public static async create (user: any): Promise<string>  {
-        const collection = await this.connection();
-        return (await collection.insertOne(user)).toString();
+        return (await users.insertOne(user)).toString();
     }
 
     public static async update (user: any) {
-        const collection = await this.connection();
-        const filter = { _id: new Bson.ObjectId(user.id) };
+        const inType = (typeof(user.id)).toString();
+        var filter;
+        if (inType == "string") {
+            filter = { _id: new Bson.ObjectId(user.id) };
+        }
+        else {
+            filter = { _id: user.id };
+        }
 
         // only allowed to give specifically named values. Example : update({id, updatedQuantity});
         const update = { $set: { 
             password: user.updatedPassword, 
             username: user.updatedUsername, 
             email : user.updatedEmail,
+            ecash: user.updatedEcash,
         } }; 
         
-        return await collection.updateOne(filter, update);
+        return await users.updateOne(filter, update);
     }
 
     public static async delete (userId: string) {
-        const collection = await this.connection();
-        return await collection.deleteOne({_id: new Bson.ObjectId(userId)});
+        return await users.deleteOne({_id: new Bson.ObjectId(userId)});
     }
-
 }
 
 export default UserModel;

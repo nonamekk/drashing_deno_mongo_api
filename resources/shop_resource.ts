@@ -41,7 +41,7 @@ class ShopResource extends BaseResource {
     }
 
     public async POST() {
-        // Get Token
+        // TOKEN ///////////////////////////////////////////
         const cookie = this.request.getCookie("JWT");
         const payload = await TokenService.verifyToken(cookie);
         if (!payload) {
@@ -51,42 +51,111 @@ class ShopResource extends BaseResource {
         if (!username) {
             return this.errorResponse(401, "Unauthorized access");
         }
-        // Get params
+        // PARAMS ///////////////////////////////////////////
         const itemName = ValidationService.decodeInput(this.request.getBodyParam("name") as string || "");
         
         if (!itemName) {
             return this.errorResponse(422, "Name field is required")
         }
         
-        const user = await UserModel.getByUsername(username);
-        const item = await ItemModel.getByNameOnSale(itemName);
+        // get item and buyer user
 
+        // good point, but doesn't work. Maybee it needs timeout?
+        /*
+        const [itemBuyer, item] = await Promise.all([
+            UserModel.getByUsername(username), 
+            ItemModel.getByNameOnSale(itemName as string)
+        ]);
+        */
+       // FINDING ITEM AND USER ////////////////////////////////////
+       
+       // rofl, but this helps reduce wait from ~800 ms to ~770ms (in ~ 880 items), but thats prob because of Atlas ping or my laptop being faster don't know
+       // but I need to get fresh count without reloading the page
+       // there should be a way to take the first item and keep counting,
+       // while everything else executes with that first item, Maybe an async function launched at the begining and awaited at the end will do that or i'm wrong and have no idea how async works...
+       // but anyway, .find from connection is still slower ~ 860ms
+       // no idea how to use .lean with MongoClient
+       const i = await ItemModel.getAllInShop(0,0);
+       var countItems= 0;
+       var item = undefined;
+       for (let x in i) {
+        if (i[x].name == itemName) {
+            if (countItems == 0) {
+                if (i) {
+                    item = i[x]
+                }
+            }
+            countItems += 1
+            }
+        }
+        
+       //const item = await ItemModel.getByNameOnSale(itemName);
+       const itemBuyer = await UserModel.getByUsername(username);
         if (!item) {
             return this.errorResponse(401, "All items are sold");
         }
-        if (!user) {
+        if (!itemBuyer) {
             return this.errorResponse(500, "Username not found");
         }
-        //const itemPrice = item.price;
-        const id = item._id;
         
+        // get item seller
+        const itemSeller = await UserModel.getByUsername(item.owner);
+        
+        // UPDATE ///////////////////////////////////////////////////
+        var updatedItemSeller;
 
-        const updatedOwner = username;
-        const updatedOnSale = false;
-        const itemUpdated = {
-            id, 
-            updatedOwner, 
-            updatedOnSale
+        // if item seller is not admin or not deleted (registration restricts registering username as "admin")
+        if (itemSeller) {
+            updatedItemSeller = {
+                id: itemSeller._id,
+                updatedEcash: (itemSeller.ecash + item.price).toFixed(2),
+            };
+        }
+
+        const updatedItem = {
+            id: item._id,
+            updatedOwner: itemBuyer.username,
+            updatedOnSale: false,
         };
 
-        ItemModel.update(itemUpdated);
+       
+        const updatedItemBuyer = {
+            id: itemBuyer._id,
+            updatedEcash: (itemBuyer.ecash - item.price).toFixed(2),
+        };
 
-        this.response.body = id;
+        if (updatedItemSeller) {
+            await UserModel.update(updatedItemBuyer);
+            await ItemModel.update(updatedItem);
+            await UserModel.update(updatedItemSeller);
+            // sad
+            /*
+            await Promise.all([
+                UserModel.update(updatedItemBuyer), 
+                ItemModel.update(updatedItem),
+                UserModel.update(updatedItemSeller),
+            ]);
+            */
+        }
+        else {
+            await UserModel.update(updatedItemBuyer);
+            await ItemModel.update(updatedItem);
+            /*
+            await Promise.all([
+                UserModel.update(updatedItemBuyer), 
+                ItemModel.update(updatedItem),
+            ]);
+            */
+        }
+        
+
+        const val = {
+            count: countItems
+        }
+
+        this.response.body = val;
         this.response.status_code = 201;
         return this.response;
-
-
-        
     }
 
 }

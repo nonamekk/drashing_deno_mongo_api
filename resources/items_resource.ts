@@ -8,16 +8,6 @@ class ItemResource extends BaseResource {
         "/admin/items"
     ]
 
-    /*
-        // restricted access - requires admin user with verified token "role = admin"
-
-        Post - add items quantity
-
-        Update - change items price 
-
-
-    */
-   
     public async POST() {
         
         // Verify token and get userrole
@@ -29,7 +19,7 @@ class ItemResource extends BaseResource {
         if (!payload) {
             return this.errorResponse(401, "Unauthorized access");
         }
-        const username = payload.username;
+        //const username = payload.username;
         const userRole = payload.role;
         // change to admin
         if (userRole != "default") {

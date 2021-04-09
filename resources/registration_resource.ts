@@ -14,13 +14,7 @@ class RegistrationResource extends BaseResource {
         const email = ValidationService.decodeInput(this.request.getBodyParam("email") as string) || "";
         const username = ValidationService.decodeInput(this.request.getBodyParam("username") as string) || "";
         const rawPassword = ValidationService.decodeInput(this.request.getBodyParam("password") as string) || "";
-
-       
-        // Note - Somewhere in validation part, which prob is uniqness validations
-        // MongoClient fails to authenticate and gives an error
-        // not sure if there's same kind of pool connections like in postgre
-        // but that would have been useful
-        
+ 
         if (!email) {
             return this.errorResponse(422, "Email field is required");
         }
@@ -49,23 +43,24 @@ class RegistrationResource extends BaseResource {
         const hashedPassword = await aes.encrypt(rawPassword);
         const password = hashedPassword.hex();
         const role = "default";
+        const ecash = 20;
 
         const newUser = {
             email,
             username,
             password,
             role,
+            ecash
         }
 
         console.log("Creating user:");
 
-        const user = await UserModel.create(newUser)
+        await UserModel.create(newUser)
         
-        // this response must be saved to local storage of client
         const token = await TokenService.generateToken(newUser)
         
 
-        this.response.body = true;
+        this.response.body = newUser.username;
         this.response.setCookie({
             name: "JWT",
             value: token,

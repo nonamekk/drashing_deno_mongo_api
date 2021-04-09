@@ -3,21 +3,22 @@ import TokenService from "../services/token_service.ts";
 import ValidationService from "../services/validation_service.ts";
 import ItemModel from "../models/item_model.ts";
 
+/*
+    // restricted access - requires admin user with verified token "role = admin", but currenly default users can
+
+    Post - create new item
+
+    //Update - change items price 
+*/
+
 class ItemResource extends BaseResource {
     static paths = [
         "/admin/item"
     ]
 
-    /*
-        // restricted access - requires admin user with verified token "role = admin", but currenly default users can
 
-        Post - create new item
-
-        //Update - change items price 
-
-
-    */
     public async GET() {
+        // create list of owners usernames with quantity of items they have
         const res = await ItemModel.getAll(1, 5);
         
         this.response.body = res;

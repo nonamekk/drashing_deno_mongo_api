@@ -3,21 +3,21 @@ import ItemModel from "../models/item_model.ts";
 import TokenService from "../services/token_service.ts";
 import ValidationService from "../services/validation_service.ts";
 
+/*
+
+    Get - get all items
+
+    Get:name - get item by name
+
+    Update - change item status to active for selling (only with owner item token)
+
+    Post - search by name
+*/
+
 class InventoryResource extends BaseResource {
     static paths = [
         "/:username/inventory"
     ]
-
-    /*
-
-        Get - get all items
-
-        Get:name - get item by name
-
-        Update - change item status to active for selling (only with owner item token)
-
-        Post - search by name
-    */
 
     public async GET() {
 
