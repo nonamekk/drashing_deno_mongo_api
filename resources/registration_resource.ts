@@ -21,6 +21,9 @@ class RegistrationResource extends BaseResource {
         if (!username) {
             return this.errorResponse(422, "Username field is required");
         }
+        if (username == "admin") {
+            return this.errorResponse(403, "Can't create user with username = admin");
+        }
         if (!rawPassword) {
             return this.errorResponse(422, "Password field is required");
         }
