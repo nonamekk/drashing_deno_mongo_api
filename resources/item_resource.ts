@@ -18,11 +18,23 @@ class ItemResource extends BaseResource {
 
 
     public async GET() {
-        // create list of owners usernames with quantity of items they have
-        const res = await ItemModel.getAll(1, 5);
+        const items = await ItemModel.getAll(0,0);
+
+        const itemOwnerContainers = [];
         
-        this.response.body = res;
-        this.response.status_code = 200;
+        for (let x in items) {
+            const a = itemOwnerContainers.findIndex(({owner}) => owner === items[x].owner);
+
+            if (a == -1) {
+                itemOwnerContainers.push({owner: items[x].owner, quantity: 1})
+            }
+            else {
+                itemOwnerContainers[a].quantity += 1;
+            }
+        }
+
+        this.response.body = itemOwnerContainers;
+        this.response.status_code = 201;
 
         return this.response;
     }
