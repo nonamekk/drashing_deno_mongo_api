@@ -32,5 +32,5 @@ path | GET | POST
 /register | | Send "email", "username" and "password"
 /:username/inventory | Inventory owner is able to see the list of purchased items | Send "name" to put item on sale
 /:username | Return username from db |
-/admin/item | Get first 5 items, skip 1 | Send "name" and "price" to create item
+/admin/item | Get list of owners and quantity of owned items | Send "name" and "price" to create item
 /admin/items | | Send "name" and "quantity" to add n amount to already existing item
