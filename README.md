@@ -28,9 +28,9 @@ path | GET | POST
 --- | --- | ---
 / | Get list of items names and their quantity | Send "name" to buy the item, returns quantity of that item left to be purchased 
 /authentication | If token is active in header, returns username and ecash of the token owner, else return false | Send your cookie to delete it
-/:username/inventory | Inventory owner is able to see the list of purchased items | Send "name" to put item on sale
-/admin/item | Get first 5 items, skip 1 | Send "name" and "price" to create item
-/admin/items | | Send "name" and "quantity" to add n amount to already existing item
 /login | | Send "email" and "password"
 /register | | Send "email", "username" and "password"
-/username | Return username from db |
+/:username/inventory | Inventory owner is able to see the list of purchased items | Send "name" to put item on sale
+/:username | Return username from db |
+/admin/item | Get first 5 items, skip 1 | Send "name" and "price" to create item
+/admin/items | | Send "name" and "quantity" to add n amount to already existing item
