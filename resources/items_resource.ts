@@ -47,30 +47,26 @@ class ItemResource extends BaseResource {
             // trhow error
 
         const items = await ItemModel.getAllInShop(0,0);
-        for (let x in items) {
-            const a = items.findIndex(({name}) => name === itemName);
-
-            if (a == -1) {
-                return this.errorResponse(422, "Initial item is not created");
-            }
-            else {
-                const currentPrice = items[x].price;
-                for (let i = 0; i <= setQuantity; i++) {
-                    const newItem = {
-                        name: itemName,
-                        price: currentPrice,
-                        owner: "admin",
-                        onSale: true,
-                    }
-                    await ItemModel.create(newItem)
+        const onlySelectedNameItems = items.filter( ({name}) => name === itemName);
+        if (!onlySelectedNameItems) {
+            return this.errorResponse(422, "Initial item is not created");
+        }
+        else {
+            const itemPrice = onlySelectedNameItems[0].price
+            for (let i = 0; i <= setQuantity; i++) {
+                const newItem = {
+                    name: itemName,
+                    price: itemPrice,
+                    owner: "admin",
+                    onSale: true,
                 }
-                this.response.body = setQuantity + " of item name: " + itemName + " are added";
-                this.response.status_code = 201;
-                return this.response;
+                await ItemModel.create(newItem)
             }
+            this.response.body = setQuantity + " of item name: " + itemName + " are added";
+            this.response.status_code = 201;
+            return this.response;
         }
     }
-
 }
 
 export default ItemResource;

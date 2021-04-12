@@ -34,7 +34,7 @@ class ShopResource extends BaseResource {
         }
 
         this.response.body = itemContainers;
-        this.response.status_code = 201;
+        this.response.status_code = 200;
 
         return this.response;
         
@@ -150,7 +150,7 @@ class ShopResource extends BaseResource {
         
 
         const val = {
-            count: countItems
+            count: countItems-1
         }
 
         this.response.body = val;

@@ -16,7 +16,7 @@ import ValidationService from "../services/validation_service.ts";
 
 class InventoryResource extends BaseResource {
     static paths = [
-        "/:username/inventory"
+        "/user/:username/inventory"
     ]
 
     public async GET() {

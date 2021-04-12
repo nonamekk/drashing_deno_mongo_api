@@ -7,6 +7,14 @@ import ShopResource from "./resources/shop_resource.ts";
 import UserResource from "./resources/user_resource.ts";
 import ItemsResource from "./resources/items_resource.ts";
 import AuthenticationResource from "./resources/authentication_resource.ts";
+import { Cors } from "https://deno.land/x/drash_middleware@v0.7.6/cors/mod.ts";
+
+var corsOptions = {
+    //origin: 'http://localhost:5050/#/login',
+    origin: ['http://localhost:8080', 'http://192.168.2.119:8080'],
+    //origin: true,
+    credentials: true
+}
 
 export const server = new Drash.Http.Server({
     directory: ".",
@@ -22,6 +30,11 @@ export const server = new Drash.Http.Server({
         ItemResource,
         ItemsResource,
     ],
+    middleware: {
+        after_request: [
+            Cors(corsOptions)
+        ],
+    }, 
     // ask documentation later about static_paths
     //static_paths: ["/public"]
 });

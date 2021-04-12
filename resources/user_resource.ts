@@ -3,7 +3,7 @@ import UserModel from "../models/user_model.ts";
 
 class UserResource extends BaseResource {
     static paths = [
-        "/:username",
+        "/user/:username",
     ]
     /*
 
