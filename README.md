@@ -30,7 +30,7 @@ path | GET | POST
 /authentication | If token is active in header, returns username and ecash of the token owner, else return false | Send your cookie to delete it
 /login | | Send "email" and "password"
 /register | | Send "email", "username" and "password"
-/:username/inventory | Inventory owner is able to see the list of purchased items | Send "name" to put item on sale
-/:username | Return username from db |
+/user/:username/inventory | Inventory owner is able to see the list of purchased items | Send "name" to put item on sale
+/user/:username | Return username from db |
 /admin/item | Get list of owners and quantity of owned items | Send "name" and "price" to create item
 /admin/items | | Send "name" and "quantity" to add n amount to already existing item
