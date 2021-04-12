@@ -14,6 +14,8 @@ What is bad?
  - Calling await individually and not 2 or more at once, tried Promise.all, didn't work
  - Connects to individual primary cluster of mongo Atlas (folks say mongov0.13.0 works with URI connection)
  - No additional security
+ - Small mistakes, leading to big problems (need fix)
+ - AssertionError when requesting to much from mongo
 
 What is good?
  - Authentification with JWT, saves token to response cookie
